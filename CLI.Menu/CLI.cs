@@ -2,17 +2,24 @@
 {
     public static class CLI
     {
-        const int START_INDEX_Y = 1;
-        const int START_INDEX_X = 1;
+        private const int START_INDEX_Y = 8;
+        private const int START_INDEX_X = 10;
 
         public static int SelectOption(params string[] items)
         {
             Console.Clear();
-            Console.WriteLine("Bitte auswählen:");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   ///// Was möchtest du als nächstes machen?");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine();
 
             foreach (var item in items)
             {
-                Console.WriteLine($"[ ] - {item}");
+                Console.WriteLine($"         [ ] - {item}");
             }
 
             var option = ChooseOption(items.Length);
