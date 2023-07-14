@@ -1,4 +1,4 @@
-﻿namespace CLIMenu // Note: actual namespace depends on the project name.
+﻿namespace CLIMenu
 {
     internal class Program
     {
@@ -46,32 +46,48 @@
                 Console.WriteLine($"[ ] - {item}");
             }
 
-            var option = ChooseOption();
+            var option = ChooseOption(items.Length);
 
             Console.Clear();
 
             return option;
         }
 
-        private static int ChooseOption()
+        private static int ChooseOption(int optionCount)
         {
             bool selected = false;
             int selectedIndex = 0;
+
             WriteAt("X", 0, selectedIndex);
 
             do
             {
-                ConsoleKeyInfo result = Console.ReadKey();
+                ConsoleKeyInfo result = Console.ReadKey(true);
                 int currentIndex = selectedIndex;
 
                 switch (result.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        selectedIndex--;
+                        if (selectedIndex == 0)
+                        {
+                            selectedIndex = optionCount - 1;
+                        }
+                        else
+                        {
+                            selectedIndex--;
+                        }
                         MoveCursor(currentIndex, selectedIndex);
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex++;
+                        if (selectedIndex == optionCount - 1)
+                        {
+                            selectedIndex = 0;
+                        }
+                        else
+                        {
+                            selectedIndex++;
+                        }
+
                         MoveCursor(currentIndex, selectedIndex);
                         break;
                     case ConsoleKey.Enter:
@@ -90,13 +106,14 @@
         {
             WriteAt(" ", 0, currentIndex);
             WriteAt("X", 0, newIndex);
+            SetCursor(0, newIndex);
         }
 
         private static void WriteAt(string s, int x, int y)
         {
             try
             {
-                Console.SetCursorPosition(START_INDEX_X + x, START_INDEX_Y + y);
+                SetCursor(x, y);
                 Console.Write(s);
             }
             catch (ArgumentOutOfRangeException e)
@@ -104,6 +121,11 @@
                 Console.Clear();
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private static void SetCursor(int x, int y)
+        {
+            Console.SetCursorPosition(START_INDEX_X + x, START_INDEX_Y + y);
         }
     }
 }
