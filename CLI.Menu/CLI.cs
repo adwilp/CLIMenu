@@ -2,25 +2,14 @@
 {
     public static class CLI
     {
+        private const int INIT_INDEX = 0;
         private const int START_INDEX_Y = 8;
         private const int START_INDEX_X = 10;
+        private const string SELECTOR = "X";
 
         public static int SelectOption(params string[] items)
         {
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("   /////////////////////////////////////////////");
-            Console.WriteLine("   /////////////////////////////////////////////");
-            Console.WriteLine("   ///// Was möchtest du als nächstes machen?");
-            Console.WriteLine("   /////////////////////////////////////////////");
-            Console.WriteLine("   /////////////////////////////////////////////");
-            Console.WriteLine();
-
-            foreach (var item in items)
-            {
-                Console.WriteLine($"         [ ] - {item}");
-            }
+            PrintMenu(items);
 
             var option = ChooseOption(items.Length);
 
@@ -32,9 +21,9 @@
         private static int ChooseOption(int optionCount)
         {
             bool selected = false;
-            int selectedIndex = 0;
+            int selectedIndex = INIT_INDEX;
 
-            WriteAt("X", 0, selectedIndex);
+            WriteAt(SELECTOR, INIT_INDEX, selectedIndex);
 
             do
             {
@@ -44,27 +33,10 @@
                 switch (result.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        if (selectedIndex == 0)
-                        {
-                            selectedIndex = optionCount - 1;
-                        }
-                        else
-                        {
-                            selectedIndex--;
-                        }
-                        MoveCursor(currentIndex, selectedIndex);
+                        selectedIndex = MoveUp(currentIndex, selectedIndex, optionCount);
                         break;
                     case ConsoleKey.DownArrow:
-                        if (selectedIndex == optionCount - 1)
-                        {
-                            selectedIndex = 0;
-                        }
-                        else
-                        {
-                            selectedIndex++;
-                        }
-
-                        MoveCursor(currentIndex, selectedIndex);
+                        selectedIndex = MoveDown(currentIndex, selectedIndex, optionCount);
                         break;
                     case ConsoleKey.Enter:
                         selected = true;
@@ -78,11 +50,43 @@
             return selectedIndex;
         }
 
+        private static int MoveUp(int currentIndex, int selectedIndex, int optionCount)
+        {
+            if (selectedIndex == INIT_INDEX)
+            {
+                selectedIndex = optionCount - 1;
+            }
+            else
+            {
+                selectedIndex--;
+            }
+
+            MoveCursor(currentIndex, selectedIndex);
+
+            return selectedIndex;
+        }
+
+        private static int MoveDown(int currentIndex, int selectedIndex, int optionCount)
+        {
+            if (selectedIndex == optionCount - 1)
+            {
+                selectedIndex = INIT_INDEX;
+            }
+            else
+            {
+                selectedIndex++;
+            }
+
+            MoveCursor(currentIndex, selectedIndex);
+
+            return selectedIndex;
+        }
+
         private static void MoveCursor(int currentIndex, int newIndex)
         {
-            WriteAt(" ", 0, currentIndex);
-            WriteAt("X", 0, newIndex);
-            SetCursor(0, newIndex);
+            WriteAt(" ", INIT_INDEX, currentIndex);
+            WriteAt(SELECTOR, INIT_INDEX, newIndex);
+            SetCursor(INIT_INDEX, newIndex);
         }
 
         private static void WriteAt(string s, int x, int y)
@@ -102,6 +106,24 @@
         private static void SetCursor(int x, int y)
         {
             Console.SetCursorPosition(START_INDEX_X + x, START_INDEX_Y + y);
+        }
+
+        private static void PrintMenu(string[] items)
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   ///// Was möchtest du als nächstes machen?");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine("   /////////////////////////////////////////////");
+            Console.WriteLine();
+
+            foreach (var item in items)
+            {
+                Console.WriteLine($"         [ ] - {item}");
+            }
         }
     }
 }
